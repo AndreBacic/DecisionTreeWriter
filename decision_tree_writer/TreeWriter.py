@@ -1,4 +1,4 @@
-from BaseDecisionTree import *
+from decision_tree_writer.BaseDecisionTree import *
 from typing import Dict, List, Tuple
 import uuid
 
@@ -8,8 +8,8 @@ class DecisionTreeWriter:
     and then saves it to a new .py file as a class extending BaseDecisionTree
     """
     def __init__(self, max_depth: int = 998, min_node_size: int = 1, label_name = "LABEL") -> None:
-        self.max_depth = abs(max_depth)
-        self.min_node_size = abs(min_node_size)
+        self.max_depth = max_depth
+        self.min_node_size = min_node_size
         self.label_name = label_name
 
         self.supported_field_types = [int, float, bool]
@@ -20,7 +20,7 @@ class DecisionTreeWriter:
         self.math_funcs = [self.MATH_EQUALS, self.MATH_SUM, self.MATH_DIFFERENCE, self.MATH_PRODUCT, self.MATH_QUOTIENT]
 
 
-    def write_tree(self, data_set: List[Dict or object], # TODO: Validate that all of the items in data_set have the same keys/attributes
+    def create_tree(self, data_set: List[Dict or object], # TODO: Validate that all of the items in data_set have the same keys/attributes
                          look_for_correlations: bool = True, 
                          tree_name: str = "DecisionTreeModel",
                          file_folder: str = None) -> None:
@@ -35,13 +35,15 @@ class DecisionTreeWriter:
         O of time: O(len(data_set)^2 * log2(len(data_set))) = O(n^2 * log2(n)) <- (best and probably average cases, worst is O(n^3))
         O of space: O(n)
         """
+
+        tree_name = tree_name.replace(" ","")
         
         guid = str(uuid.uuid4()).replace('-', '_')
         file_name = f"{tree_name}__{guid}"
 
         # TODO: make file writer import the object's class, if necessary.
         is_dict, data_type = ("dictionary ", "dict") if type(data_set) == dict else ("", str(data_set[0].__class__.__name__))
-        file = ["from BaseDecisionTree import *",
+        file = ["from decision_tree_writer.BaseDecisionTree import *",
                 "",
                 "# class-like syntax because it acts like it's instantiating a class.",
                f"def {file_name}() -> 'BaseDecisionTree':",
@@ -63,7 +65,7 @@ class DecisionTreeWriter:
             self.__field_access_postfix = "']"
 
         if look_for_correlations:
-            expanded_data_set = self.find_correlations(expanded_data_set)
+            expanded_data_set = self.__find_correlations(expanded_data_set)
 
         # 2) recursively build branches or leaves based on best fit
         file += self.__build_branch(expanded_data_set, 1, ".root")
@@ -84,7 +86,7 @@ class DecisionTreeWriter:
         O of space: O(n * log(n)) <- (best and probably average cases, worst is O(n^2))
         """
         # 1) check that all labels are different
-        labels_are_same, primary_label = self.check_labels(data_set)
+        labels_are_same, primary_label = self.__check_labels(data_set)
         if labels_are_same or depth >= self.max_depth or len(data_set) <= self.min_node_size:
             return [f"    tree{branch_chain} = Leaf('{primary_label}')"]
 
@@ -98,14 +100,14 @@ class DecisionTreeWriter:
             data_set.sort(key = lambda x: x.get(field))
             fields = list(map(lambda x: x[field], data_set))
             labels = list(map(lambda x: x[self.label_name], data_set))
-            gain, split_point = self.calculate_max_gini_gain(labels, fields)
+            gain, split_point = self.__calculate_max_gini_gain(labels, fields)
             if gain > max_gain:
                 max_gain = gain
                 value_to_split_by = split_point
                 field_to_split_by = field
 
         # 3) Perform the decision split
-        left_data_set, right_data_set = self.split_data(data_set, field_to_split_by, value_to_split_by)
+        left_data_set, right_data_set = self.__split_data(data_set, field_to_split_by, value_to_split_by)
 
         # 4) Create new Branch
         if field_to_split_by[:10] == "tree.MATH_": # Correlated fields       # field_to_split_by is already formatted code
@@ -132,14 +134,16 @@ class DecisionTreeWriter:
         try:
             file = open(f"{file_folder}{file_name}.py", "w")
         except FileNotFoundError:
-            raise FileNotFoundError(f"Error: file folder {file_folder} was not found.")
+            file_folder = file_folder[:-1]
+            raise FileNotFoundError(f"Error: file folder '{file_folder}' was not found." + 
+                    " If you called an instance of DecisionTreeWriter's create_tree method, please ensure that parameter file_folder is an existing folder.")
             
         for line in lines:
             file.write(line+"\n")
         file.close()
 
 
-    def find_correlations(self, data_set: List[Dict]) -> List[Dict]:
+    def __find_correlations(self, data_set: List[Dict]) -> List[Dict]:
         """
         Mutates and returns data_set after adding to it several new key-value pairs for each possible pair combinations of its fields,
         adding one pair of each combination for each basic math operation.
@@ -166,7 +170,7 @@ class DecisionTreeWriter:
         return data_set
 
 
-    def check_labels(self, data_set: List[Dict]) -> Tuple[bool, str]:
+    def __check_labels(self, data_set: List[Dict]) -> Tuple[bool, str]:
         """
         Checks if all of the labels of the items in data_set are the same.
         
@@ -191,7 +195,7 @@ class DecisionTreeWriter:
         return len(counted_labels.keys()) == 1, primary_label        
 
 
-    def split_data(self, data_set: List[Dict], field_to_split_by: str, value_to_split_by) -> Tuple[List[Dict], List[Dict]]:
+    def __split_data(self, data_set: List[Dict], field_to_split_by: str, value_to_split_by) -> Tuple[List[Dict], List[Dict]]:
         """
         Splits data_set into two new lists, separating all items into the first list where field_to_split_by <= value_to_split_by, and the rest into the second.
 
@@ -209,7 +213,7 @@ class DecisionTreeWriter:
         return left, right
 
 
-    def calculate_max_gini_gain(self, labels: List[str], fields: List) -> Tuple[float, float]:
+    def __calculate_max_gini_gain(self, labels: List[str], fields: List) -> Tuple[float, float]:
         """
         Determines at what value in between some items of fields a data list should be split
         to minimize the gini impurity of the labels of the data list.
@@ -266,10 +270,25 @@ class DecisionTreeWriter:
         
         s = 1.0
         for i in probs.values():
-            s -= i*i # retrns the negative of the sum, so just minus each time.
+            s -= i*i # returns the negative of the sum, so just minus each time.
         
         s = round(s, 7) # resolves some weird rounding errors
         return s
+
+    def __get_max_depth(self):
+        return self.__max_depth
+    def __set_max_depth(self, val: int):
+        if val > 998: val = 998
+        elif val < 1: val = 1
+        self.__max_depth = val
+    max_depth = property(__get_max_depth, __set_max_depth)
+
+    def __get_min_node_size(self):
+        return self.__min_node_size
+    def __set_min_node_size(self, val: int):
+        if val < 1: val = 1
+        self.__min_node_size = val
+    max_depth = property(__get_min_node_size, __set_min_node_size)
 
 
     # Same functions used by BaseDecisionTree for duck typing
