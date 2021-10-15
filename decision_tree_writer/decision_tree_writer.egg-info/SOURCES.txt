@@ -1,0 +1,8 @@
+LICENCE
+README.md
+pyproject.toml
+setup.cfg
+decision_tree_writer/decision_tree_writer.egg-info/PKG-INFO
+decision_tree_writer/decision_tree_writer.egg-info/SOURCES.txt
+decision_tree_writer/decision_tree_writer.egg-info/dependency_links.txt
+decision_tree_writer/decision_tree_writer.egg-info/top_level.txt
