@@ -28,6 +28,8 @@ class DecisionTreeWriter:
         self trains a decision tree to classify items of the type of items in data_set by its key/field self.label_name,
         and then writes the code for the new decision tree model to file_folder/tree_name__newUuid.py.
 
+        All of the items in data_set must be of the same type, or the decision tree model produced may not function properly.
+
         look_for_correlations is whether or not the tree should be trained to look for simple relationships between all 
         possible pairs of the data items' fields. Setting this value to True can create a much better tree but can also take
         much longer to run. (if F is the number of a data item's fields, time and space complexity grow by O(F^2), as opposed to O(F))
@@ -41,10 +43,16 @@ class DecisionTreeWriter:
         guid = str(uuid.uuid4()).replace('-', '_')
         file_name = f"{tree_name}__{guid}"
 
-        # TODO: make file writer import the object's class, if necessary.
+        # TODO: make file writer import the object's class instead of guessing.
         is_dict, data_type = ("dictionary ", "dict") if type(data_set) == dict else ("", str(data_set[0].__class__.__name__))
-        file = ["from decision_tree_writer.BaseDecisionTree import *",
-                "",
+        import_statement = ["", 
+             "# Please fix this import statement if necessary",
+            f"from {data_type} import {data_type}", 
+             ""] if type(data_set) == dict else [""]
+
+        file = ["from decision_tree_writer.BaseDecisionTree import *"]
+        file += import_statement 
+        file += [
                 "# class-like syntax because it acts like it's instantiating a class.",
                f"def {file_name}() -> 'BaseDecisionTree':",
                 '    """',
