@@ -7,14 +7,10 @@ Simply run `py -m pip install decision-tree-writer` from the command line (Windo
 or `python3 -m pip install decision-tree-writer` (Unix/macOS) and you're ready to go!
 
 ## Usage
-### 1) Train the model
-Use the DecisionTreeWriter class to train a model on a data set and write the code to a new file in a specified fie folder (default folder is the same as your code):
+### 0) Gather training data
+Models are trained on a list of labeled dictionaries or objects. The algorithm only looks at attributes/keys that have numeric or Boolean values, so all nested objects or strings are simply ignored. If you train it with dictionaries, all of the items must have the same keys (with numeric or Boolean values; each can have different keys with string or object or whatever else values). Similarly, if you give it a list of objects, they must all have the same attributes (with integer, floating-point, or Boolean values). Finally, all of the items in the data set must have a label attribute/key that has the same name for each item, and can have any value (as shown in this example data set):
 ```python
-from decision_tree_writer import DecisionTreeWriter
-
 # Here we're using some of the famous iris data set for an example.
-# You could alternatively make an Iris class with the same 
-# attributes as the keys of each of these dictionaries.
 iris_data = [
     { "species": "setosa", "sepal_length": 5.2, "sepal_width": 3.5, 
                             "petal_length": 1.5, "petal_width": 0.2},
@@ -35,6 +31,25 @@ iris_data = [
     { "species": "virginica", "sepal_length": 6.8, "sepal_width": 3.0, 
                             "petal_length": 5.5, "petal_width": 2.1}
     ]
+```
+```python
+# You could alternatively make an Iris class with the same 
+# attributes as the keys of each of these dictionaries:
+from dataclasses import dataclass
+@dataclass
+class Iris:
+    species: str
+    sepal_length: float
+    sepal_width: float
+    petal_length: float
+    petal_width: float
+# And then instantiate twelve Iris objects with the previous data
+```
+### 1) Train the model
+Use the DecisionTreeWriter class to train a model on a data set and write the code to a new file in a specified file folder (default folder is the same as your code) The label of an item in the training data set is a specified attribute or key (in this example, the key "species"):
+```python
+from decision_tree_writer import DecisionTreeWriter
+
 
 # Create the writer. 
 # You must specify which attribute or key is the label of the data items.
@@ -43,7 +58,9 @@ iris_data = [
 writer = DecisionTreeWriter(label_name="species")
 
 # Trains a new model and saves it to a new .py file
-writer.create_tree(iris_data, True, "Iris Classifier")
+writer.create_tree(data_set = iris_data, 
+                   look_for_correlations = True, 
+                   tree_name = "Iris Classifier")
 ```
 
 ### 2) Using the new decision tree
@@ -68,12 +85,13 @@ def IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree'
     return tree
 ```
 
-**Important note**: if you train your model with class instance data you will have to import that class in the new file. 
-That might look like: 
+**Important note**: if you train your model with class instance data you may have to change the import statement for that class in the new file, as the algorithm can't as of this release find the source file of the class, and just guesses that you named the file after the class.
+The code for a model trained with objects would start like: 
 ```python
 from decision_tree_writer.BaseDecisionTree import *
 
-from wherever import Iris
+# Please fix this import statement if necessary
+from Iris import Iris
 
 def IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree':
     tree = BaseDecisionTree(None, Iris, 

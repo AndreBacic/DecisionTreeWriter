@@ -7,7 +7,7 @@ class DecisionTreeWriter:
     Makes a decision tree based on a data set 
     and then saves it to a new .py file as a class extending BaseDecisionTree
     """
-    def __init__(self, max_depth: int = 998, min_node_size: int = 1, label_name = "LABEL") -> None:
+    def __init__(self, label_name = "LABEL", max_depth: int = 998, min_node_size: int = 1) -> None:
         self.max_depth = max_depth
         self.min_node_size = min_node_size
         self.label_name = label_name
