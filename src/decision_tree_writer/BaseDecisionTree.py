@@ -22,7 +22,7 @@ class BaseDecisionTree(object):
         """
         Returns a list of (hopefully) correct labels for each item in objects.
         """
-        labels =[]
+        labels = []
         for item in objects:
             labels.append(self.classify_one(item))
         return labels

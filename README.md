@@ -7,6 +7,9 @@ Simply run `py -m pip install decision-tree-writer` from the command line (Windo
 or `python3 -m pip install decision-tree-writer` (Unix/macOS) and you're ready to go!
 
 ## Usage
+
+Please see the [source code](https://github.com/AndreBacic/DecisionTreeWriter) for an example program, and a brief tutorial below:
+
 ### 0) Gather training data
 Models are trained on a list of labeled dictionaries or objects. The algorithm only looks at attributes/keys that have numeric or Boolean values, so all nested objects or strings are simply ignored. If you train it with dictionaries, all of the items must have the same keys (with numeric or Boolean values; each can have different keys with string or object or whatever else values). Similarly, if you give it a list of objects, they must all have the same attributes (with integer, floating-point, or Boolean values). Finally, all of the items in the data set must have a label attribute/key that has the same name for each item, and can have any value (as shown in this example data set):
 ```python
@@ -50,7 +53,6 @@ Use the DecisionTreeWriter class to train a model on a data set and write the co
 ```python
 from decision_tree_writer import DecisionTreeWriter
 
-
 # Create the writer. 
 # You must specify which attribute or key is the label of the data items.
 # You can also specify the max branching depth of the tree (default [and max] is 998)
@@ -63,7 +65,7 @@ writer.create_tree(data_set = iris_data,
                    tree_name = "Iris Classifier")
 ```
 
-### 2) Using the new decision tree
+### 2) Examining the trained decision tree code
 In the specified file folder a new python file with one function will appear. It will have the name you gave your decision tree model plus a uuid to ensure it has a unique name. The generated code will look something like this:
 ```python
 from decision_tree_writer.BaseDecisionTree import *
@@ -72,7 +74,7 @@ from decision_tree_writer.BaseDecisionTree import *
 def Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree':
     """
     Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d 
-    has been trained to identify the species of a given object.
+    has been trained to identify the species of a given dictionary object.
     """
     tree = BaseDecisionTree(None, dict,
             'Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d')
@@ -85,8 +87,10 @@ def Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree
     return tree
 ```
 
+The trained model is built by adding decision Branches that terminate in classification Leaves to a BaseDecisionTree. When the tree is used to classify a given input, it will hand the input to its root Branch to use the given comparison function to select the left node (root.**l**) of the root if the comparison evaluates to True, and the right node (root.**r**) if it is False (in this case, it checks if the iris's sepal_length is less than or equal to 5.5). If the selected node is a Leaf, it returns the label on the Leaf. If the node is a Branch, it runs that Branch's comparison function of the input to select one of its subnodes until a Leaf is reached.
+
 **Important note**: if you train your model with class instance data you may have to change the import statement for that class in the new file if the class is in a file in a different directory from where you have the model's file placed.
-The code for a model trained with objects would look like: 
+The code for a model trained with objects would start like: 
 ```python
 from decision_tree_writer.BaseDecisionTree import *
 
@@ -98,15 +102,27 @@ def Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree
                 'Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d')
 ```
 
-Now just use the factory function to create an instance of the model.
+### 3) Using the new decision tree
+
+Now just import and call the factory function to create an instance of the trained model.
 The model has two important methods, `classify_one`, which takes a data item of the same type as you trained the model with and returns what it thinks is the correct label for it, and `classify_many`, which does the same as the first but with a list of data and returns a list of labels.
 
 Example:
 ```python
+from IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d import *
 tree = IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d()
 print(tree.classify_one(
             { "sepal_length": 5.4, "sepal_width": 3.2, 
-                "petal_length": 1.6, "petal_width": 0.3})) # output: 'setosa'
+                "petal_length": 1.6, "petal_width": 0.3})) # output: setosa
+
+print(tree.classify_many(
+    [
+        { "sepal_length": 5.4, "sepal_width": 3.2, 
+            "petal_length": 1.6, "petal_width": 0.3},
+        { "sepal_length": 5.7, "sepal_width": 2.9, 
+            "petal_length": 4.2, "petal_width": 1.3},
+    ]
+)) # output: ['setosa', 'versicolor']
 ```
 
 ## Bugs or questions
