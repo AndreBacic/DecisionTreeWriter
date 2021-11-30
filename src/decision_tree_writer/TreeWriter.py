@@ -28,7 +28,7 @@ class DecisionTreeWriter:
         self trains a decision tree to classify items of the type of items in data_set by its key/field self.label_name,
         and then writes the code for the new decision tree model to file_folder/tree_name__newUuid.py.
 
-        All of the items in data_set must be of the same type, or the decision tree model produced may not function properly.
+        All of the items in data_set must be of the same type and have the same attributes or keys, or the decision tree model produced may not function properly.
 
         look_for_correlations is whether or not the tree should be trained to look for simple relationships between all 
         possible pairs of the data items' fields. Setting this value to True can create a much better tree but can also take
@@ -43,12 +43,17 @@ class DecisionTreeWriter:
         guid = str(uuid.uuid4()).replace('-', '_')
         file_name = f"{tree_name}__{guid}"
 
-        # TODO: make file writer import the object's class instead of guessing.
-        is_dict, data_type = ("dictionary ", "dict") if type(data_set) == dict else ("", str(data_set[0].__class__.__name__))
-        import_statement = ["", 
-             "# Please fix this import statement if necessary",
-            f"from {data_set[0].__class__.__module__} import {data_type}", 
-             ""] if type(data_set) != dict else [""]
+        if type(data_set) == dict:
+            data_type_name = "dictionary object"
+            data_type = "dict"
+            import_statement = ""
+        else:
+            data_type_name = str(data_set[0].__class__.__name__)
+            data_type = data_type_name
+            import_statement = ["", 
+                                "# Please fix this import statement if necessary",
+                               f"from {data_set[0].__class__.__module__} import {data_type}", 
+                                ""]
 
         file = ["from decision_tree_writer.BaseDecisionTree import *"]
         file += import_statement 
@@ -56,7 +61,7 @@ class DecisionTreeWriter:
                 "# class-like syntax because it acts like it's instantiating a class.",
                f"def {file_name}() -> 'BaseDecisionTree':",
                 '    """',
-               f"    {file_name} has been trained to identify the {self.label_name} of a given {is_dict}object.",
+               f"    {file_name} has been trained to identify the {self.label_name} of a given {data_type_name}.",
                 '    """',
                f"    tree = BaseDecisionTree(None, {data_type}, '{file_name}')"]
 

@@ -57,7 +57,7 @@ from decision_tree_writer import DecisionTreeWriter
 # or how many data items there must be to make a new branch (default is 1).
 writer = DecisionTreeWriter(label_name="species")
 
-# Trains a new model and saves it to a new .py file
+# Trains a new model and saves it to a new .py file.
 writer.create_tree(data_set = iris_data, 
                    look_for_correlations = True, 
                    tree_name = "Iris Classifier")
