@@ -38,7 +38,7 @@ class DecisionTreeWriter:
         O of space: O(n)
         """
 
-        tree_name = tree_name.replace(" ","")
+        tree_name = tree_name.replace(" ","_")
         
         guid = str(uuid.uuid4()).replace('-', '_')
         file_name = f"{tree_name}__{guid}"
@@ -47,7 +47,7 @@ class DecisionTreeWriter:
         is_dict, data_type = ("dictionary ", "dict") if type(data_set) == dict else ("", str(data_set[0].__class__.__name__))
         import_statement = ["", 
              "# Please fix this import statement if necessary",
-            f"from {data_type} import {data_type}", 
+            f"from {data_set[0].__class__.__module__} import {data_type}", 
              ""] if type(data_set) == dict else [""]
 
         file = ["from decision_tree_writer.BaseDecisionTree import *"]

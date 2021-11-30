@@ -32,9 +32,9 @@ iris_data = [
                             "petal_length": 5.5, "petal_width": 2.1}
     ]
 ```
+
+You could alternatively make an Iris class with the same attributes as the keys of each of these dictionaries:
 ```python
-# You could alternatively make an Iris class with the same 
-# attributes as the keys of each of these dictionaries:
 from dataclasses import dataclass
 @dataclass
 class Iris:
@@ -69,13 +69,13 @@ In the specified file folder a new python file with one function will appear. It
 from decision_tree_writer.BaseDecisionTree import *
 
 # class-like syntax because it acts like it's instantiating a class.
-def IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree':
+def Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree':
     """
-    IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d 
+    Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d 
     has been trained to identify the species of a given object.
     """
     tree = BaseDecisionTree(None, dict,
-            'IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d')
+            'Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d')
     tree.root = Branch(lambda x: x['sepal_length'] <= 5.5)
     tree.root.l = Leaf('setosa')
     tree.root.r = Branch(lambda x: x['petal_length'] <= 5.0)
@@ -85,17 +85,17 @@ def IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree'
     return tree
 ```
 
-**Important note**: if you train your model with class instance data you may have to change the import statement for that class in the new file, as the algorithm can't as of this release find the source file of the class, and just guesses that you named the file after the class.
-The code for a model trained with objects would start like: 
+**Important note**: if you train your model with class instance data you may have to change the import statement for that class in the new file if the class is in a file in a different directory from where you have the model's file placed.
+The code for a model trained with objects would look like: 
 ```python
 from decision_tree_writer.BaseDecisionTree import *
 
 # Please fix this import statement if necessary
-from Iris import Iris
+from sample_data.flowers import Iris
 
-def IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree':
+def Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree':
     tree = BaseDecisionTree(None, Iris, 
-                'IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d')
+                'Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d')
 ```
 
 Now just use the factory function to create an instance of the model.
