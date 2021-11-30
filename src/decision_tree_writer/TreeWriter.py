@@ -48,7 +48,7 @@ class DecisionTreeWriter:
         import_statement = ["", 
              "# Please fix this import statement if necessary",
             f"from {data_set[0].__class__.__module__} import {data_type}", 
-             ""] if type(data_set) == dict else [""]
+             ""] if type(data_set) != dict else [""]
 
         file = ["from decision_tree_writer.BaseDecisionTree import *"]
         file += import_statement 
