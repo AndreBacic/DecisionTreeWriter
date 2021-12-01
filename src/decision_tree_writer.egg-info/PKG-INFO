@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: decision-tree-writer
-Version: 0.1.3
+Version: 0.2.1
 Summary: Scaffolds out code for decision tree models that can learn to find relationships between the attributes of an object.
 Home-page: https://github.com/AndreBacic/DecisionTreeWriter
 Author: Andre Bacic
@@ -24,14 +24,13 @@ Simply run `py -m pip install decision-tree-writer` from the command line (Windo
 or `python3 -m pip install decision-tree-writer` (Unix/macOS) and you're ready to go!
 
 ## Usage
-### 1) Train the model
-Use the DecisionTreeWriter class to train a model on a data set and write the code to a new file in a specified fie folder (default folder is the same as your code):
-```python
-from decision_tree_writer import DecisionTreeWriter
 
+Please see the [source code](https://github.com/AndreBacic/DecisionTreeWriter) for an example program, and a brief tutorial below:
+
+### 0) Gather training data
+Models are trained on a list of labeled dictionaries or objects. The algorithm only looks at attributes/keys that have numeric or Boolean values, so all nested objects or strings are simply ignored. If you train it with dictionaries, all of the items must have the same keys (with numeric or Boolean values; each can have different keys with string or object or whatever else values). Similarly, if you give it a list of objects, they must all have the same attributes (with integer, floating-point, or Boolean values). Finally, all of the items in the data set must have a label attribute/key that has the same name for each item, and can have any value (as shown in this example data set):
+```python
 # Here we're using some of the famous iris data set for an example.
-# You could alternatively make an Iris class with the same 
-# attributes as the keys of each of these dictionaries.
 iris_data = [
     { "species": "setosa", "sepal_length": 5.2, "sepal_width": 3.5, 
                             "petal_length": 1.5, "petal_width": 0.2},
@@ -52,29 +51,50 @@ iris_data = [
     { "species": "virginica", "sepal_length": 6.8, "sepal_width": 3.0, 
                             "petal_length": 5.5, "petal_width": 2.1}
     ]
-
-# Create the writer. You must specify which attribute or key is the label of the data items.
-# You can also specify the max branching depth of the tree (default [and max] is 998)
-# or how many data items there must be to make a new branch (default is 1)
-writer = DecisionTreeWriter(label_name="species")
-
-# Trains a new model and saves it to a new .py file
-writer.create_tree(iris_data, True, "Iris Classifier")
 ```
 
-### 2) Using the new decision tree
+You could alternatively make an Iris class with the same attributes as the keys of each of these dictionaries:
+```python
+from dataclasses import dataclass
+@dataclass
+class Iris:
+    species: str
+    sepal_length: float
+    sepal_width: float
+    petal_length: float
+    petal_width: float
+# And then instantiate twelve Iris objects with the previous data
+```
+### 1) Train the model
+Use the DecisionTreeWriter class to train a model on a data set and write the code to a new file in a specified file folder (default folder is the same as your code) The label of an item in the training data set is a specified attribute or key (in this example, the key "species"):
+```python
+from decision_tree_writer import DecisionTreeWriter
+
+# Create the writer. 
+# You must specify which attribute or key is the label of the data items.
+# You can also specify the max branching depth of the tree (default [and max] is 998)
+# or how many data items there must be to make a new branch (default is 1).
+writer = DecisionTreeWriter(label_name="species")
+
+# Trains a new model and saves it to a new .py file.
+writer.create_tree(data_set = iris_data, 
+                   look_for_correlations = True, 
+                   tree_name = "Iris Classifier")
+```
+
+### 2) Examining the trained decision tree code
 In the specified file folder a new python file with one function will appear. It will have the name you gave your decision tree model plus a uuid to ensure it has a unique name. The generated code will look something like this:
 ```python
 from decision_tree_writer.BaseDecisionTree import *
 
 # class-like syntax because it acts like it's instantiating a class.
-def IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree':
+def Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree':
     """
-    IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d 
-    has been trained to identify the species of a given object.
+    Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d 
+    has been trained to identify the species of a given dictionary object.
     """
     tree = BaseDecisionTree(None, dict,
-            'IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d')
+            'Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d')
     tree.root = Branch(lambda x: x['sepal_length'] <= 5.5)
     tree.root.l = Leaf('setosa')
     tree.root.r = Branch(lambda x: x['petal_length'] <= 5.0)
@@ -84,27 +104,42 @@ def IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree'
     return tree
 ```
 
-**Important note**: if you train your model with class instance data you will have to import that class in the new file. 
-That might look like: 
+The trained model is built by adding decision Branches that terminate in classification Leaves to a BaseDecisionTree. When the tree is used to classify a given input, it will hand the input to its root Branch to use the given comparison function to select the left node (root.**l**) of the root if the comparison evaluates to True, and the right node (root.**r**) if it is False (in this case, it checks if the iris's sepal_length is less than or equal to 5.5). If the selected node is a Leaf, it returns the label on the Leaf. If the node is a Branch, it runs that Branch's comparison function of the input to select one of its subnodes until a Leaf is reached.
+
+**Important note**: if you train your model with class instance data you may have to change the import statement for that class in the new file if the class is in a file in a different directory from where you have the model's file placed.
+The code for a model trained with objects would start like: 
 ```python
 from decision_tree_writer.BaseDecisionTree import *
 
-from wherever import Iris
+# Please fix this import statement if necessary
+from sample_data.flowers import Iris
 
-def IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree':
+def Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree':
     tree = BaseDecisionTree(None, Iris, 
-                'IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d')
+                'Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d')
 ```
 
-Now just use the factory function to create an instance of the model.
+### 3) Using the new decision tree
+
+Now just import and call the factory function to create an instance of the trained model.
 The model has two important methods, `classify_one`, which takes a data item of the same type as you trained the model with and returns what it thinks is the correct label for it, and `classify_many`, which does the same as the first but with a list of data and returns a list of labels.
 
 Example:
 ```python
+from IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d import *
 tree = IrisClassifier__0c609d3a_741e_4770_8bce_df246bad054d()
 print(tree.classify_one(
             { "sepal_length": 5.4, "sepal_width": 3.2, 
-                "petal_length": 1.6, "petal_width": 0.3})) # output: 'setosa'
+                "petal_length": 1.6, "petal_width": 0.3})) # output: setosa
+
+print(tree.classify_many(
+    [
+        { "sepal_length": 5.4, "sepal_width": 3.2, 
+            "petal_length": 1.6, "petal_width": 0.3},
+        { "sepal_length": 5.7, "sepal_width": 2.9, 
+            "petal_length": 4.2, "petal_width": 1.3},
+    ]
+)) # output: ['setosa', 'versicolor']
 ```
 
 ## Bugs or questions
