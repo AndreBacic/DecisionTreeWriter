@@ -8,7 +8,7 @@ or `python3 -m pip install decision-tree-writer` (Unix/macOS) and you're ready t
 
 ## Usage
 
-Please see the [source code](https://github.com/AndreBacic/DecisionTreeWriter) for an example program, and a brief tutorial below:
+Please see the [source code](https://github.com/AndreBacic/DecisionTreeWriter) for an example program, and also please see the brief tutorial below:
 
 ### 0) Gather training data
 Models are trained on a list of labeled dictionaries or objects. The algorithm only looks at attributes/keys that have numeric or Boolean values, so all nested objects or strings are simply ignored. If you train it with dictionaries, all of the items must have the same keys (with numeric or Boolean values; each can have different keys with string or object or whatever else values). Similarly, if you give it a list of objects, they must all have the same attributes (with integer, floating-point, or Boolean values). Finally, all of the items in the data set must have a label attribute/key that has the same name for each item, and can have any value (as shown in this example data set):

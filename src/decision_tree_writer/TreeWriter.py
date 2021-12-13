@@ -38,12 +38,12 @@ class DecisionTreeWriter:
         O of space: O(n)
         """
 
-        tree_name = tree_name.replace(" ","_")
+        tree_name = self.__validate_tree_name(tree_name)
         
         guid = str(uuid.uuid4()).replace('-', '_')
         file_name = f"{tree_name}__{guid}"
 
-        if type(data_set) == dict:
+        if type(data_set[0]) == dict:
             data_type_name = "dictionary object"
             data_type = "dict"
             import_statement = ""
@@ -87,6 +87,21 @@ class DecisionTreeWriter:
 
         
         self.__write_tree_file(file_name, file, file_folder)
+
+
+    def __validate_tree_name(self, tree_name):
+        i = 0
+        for char in tree_name:
+            if char not in "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_- ":
+                raise Exception("When using a TreeWriter instance, you asked it to create a model with an invalid name. Please give a valid function name next time.")
+            
+            elif i == 0 and char in "1234567890":
+                raise Exception("When using a TreeWriter instance, you asked it to create a model with an invalid name. Please give a valid function name next time.")
+            
+            i += 1
+
+        tree_name.replace(" ","_")
+        tree_name.replaxe("-","_")
 
 
     def __build_branch(self, data_set: List[Dict], depth: int, branch_chain: str) -> List[str]:
