@@ -90,13 +90,14 @@ class DecisionTreeWriter:
 
 
     def __validate_tree_name(self, tree_name):
+        errorMessage = "When using a DecisionTreeWriter instance, you asked it to create a model with an invalid name. Please give a valid function name next time."
         i = 0
         for char in tree_name:
             if char not in "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_- ":
-                raise Exception("When using a TreeWriter instance, you asked it to create a model with an invalid name. Please give a valid function name next time.")
+                raise Exception(errorMessage)
             
             elif i == 0 and char in "1234567890":
-                raise Exception("When using a TreeWriter instance, you asked it to create a model with an invalid name. Please give a valid function name next time.")
+                raise Exception(errorMessage)
             
             i += 1
 
