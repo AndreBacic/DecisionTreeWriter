@@ -46,7 +46,7 @@ class DecisionTreeWriter:
         if type(data_set[0]) == dict:
             data_type_name = "dictionary object"
             data_type = "dict"
-            import_statement = ""
+            import_statement = [""]
         else:
             data_type_name = str(data_set[0].__class__.__name__)
             data_type = data_type_name
@@ -101,8 +101,7 @@ class DecisionTreeWriter:
             
             i += 1
 
-        tree_name.replace(" ","_")
-        tree_name.replaxe("-","_")
+        return tree_name.replace(" ","_").replace("-","_")
 
 
     def __build_branch(self, data_set: List[Dict], depth: int, branch_chain: str) -> List[str]:
