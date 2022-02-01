@@ -109,7 +109,14 @@ class DecisionTreeWriter:
 
         return tree_name.replace(" ","_").replace("-","_")
 
-    def is_comparable_data_set(self, data_set: List[Dict]):
+    def is_comparable_data_set(self, data_set: List[Dict]) -> bool:
+        """
+        Makes sure all items in data_set are of the same type.
+        If the items are dictionaries, this method checks if they have the same keys.
+
+        O of time: O(n)
+        O of space: O(1)
+        """
         if len(data_set) <= 1:
             return True
 
