@@ -26,7 +26,8 @@ class DecisionTreeWriter:
     def create_tree(self, data_set: List[Dict or object], # TODO: Validate that all of the items in data_set have the same keys/attributes
                          look_for_correlations: bool = True, 
                          tree_name: str = "DecisionTreeModel",
-                         file_folder: str = None) -> None:
+                         file_folder: str = None,
+                         data_set_is_certainly_comparable: bool = False) -> None:
         """
         self trains a decision tree to classify items of the type of items in data_set by its key/field self.label_name,
         and then writes the code for the new decision tree model to file_folder/tree_name__newUuid.py.
@@ -36,6 +37,9 @@ class DecisionTreeWriter:
         look_for_correlations is whether or not the tree should be trained to look for simple relationships between all 
         possible pairs of the data items' fields. Setting this value to True can create a much better tree but can also take
         much longer to run. (if F is the number of a data item's fields, time and space complexity grow by O(F^2), as opposed to O(F))
+
+        data_set_is_certainly_comparable tells the method if it should first analyze the data set to see if the data items are comparable.
+        By default (False) the analysis is performed, but setting data_set_is_certainly_comparable to True will stop it.
         
         O of time: O(len(data_set)^2 * log2(len(data_set))) = O(n^2 * log2(n)) <- (best and probably average cases, worst is O(n^3))
         O of space: O(n)
@@ -46,7 +50,7 @@ class DecisionTreeWriter:
         guid = str(uuid.uuid4()).replace('-', '_')
         file_name = f"{tree_name}__{guid}"
 
-        if not self.is_comparable_data_set(data_set):
+        if not data_set_is_certainly_comparable and not self.is_comparable_data_set(data_set):
             raise UncomparableDataSetItemsException("The items in the given data set cannot be compared. Please make sure that all data items have the same attributes/keys.")
 
         if type(data_set[0]) == dict:
