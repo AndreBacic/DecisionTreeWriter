@@ -1,0 +1,1 @@
+class UncomparableDataSetItemsException(Exception): pass

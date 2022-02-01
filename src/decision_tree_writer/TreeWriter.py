@@ -1,6 +1,9 @@
+from this import d
 from decision_tree_writer.BaseDecisionTree import *
 from typing import Dict, List, Tuple
 import uuid
+
+from decision_tree_writer.UncomparableDataSetItemsException import UncomparableDataSetItemsException
 
 class DecisionTreeWriter:
     """
@@ -42,6 +45,9 @@ class DecisionTreeWriter:
         
         guid = str(uuid.uuid4()).replace('-', '_')
         file_name = f"{tree_name}__{guid}"
+
+        if not self.is_comparable_data_set(data_set):
+            raise UncomparableDataSetItemsException("The items in the given data set cannot be compared. Please make sure that all data items have the same attributes/keys.")
 
         if type(data_set[0]) == dict:
             data_type_name = "dictionary object"
@@ -103,6 +109,22 @@ class DecisionTreeWriter:
 
         return tree_name.replace(" ","_").replace("-","_")
 
+    def is_comparable_data_set(self, data_set: List[Dict]):
+        if len(data_set) <= 1:
+            return True
+
+        needed_type = type(data_set[0])
+        for item in data_set[1:]:
+            if type(item) != needed_type:
+                return False
+
+        if needed_type == dict:
+            needed_keys == data_set[0].keys()
+            for item in data_set[1:]:
+                if item.keys() != needed_keys:
+                    return False
+        
+        return True
 
     def __build_branch(self, data_set: List[Dict], depth: int, branch_chain: str) -> List[str]:
         """
