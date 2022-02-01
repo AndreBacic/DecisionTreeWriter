@@ -113,6 +113,7 @@ class DecisionTreeWriter:
 
         return tree_name.replace(" ","_").replace("-","_")
 
+
     def is_comparable_data_set(self, data_set: List[Dict]) -> bool:
         """
         Makes sure all items in data_set are of the same type.
@@ -130,12 +131,13 @@ class DecisionTreeWriter:
                 return False
 
         if needed_type == dict:
-            needed_keys == data_set[0].keys()
+            needed_keys = data_set[0].keys()
             for item in data_set[1:]:
                 if item.keys() != needed_keys:
                     return False
         
         return True
+
 
     def __build_branch(self, data_set: List[Dict], depth: int, branch_chain: str) -> List[str]:
         """

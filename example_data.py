@@ -18,4 +18,3 @@ irises = [
     Iris('virginica', 6.1, 2.6, 5.6, 1.4),
     Iris('virginica', 6.8, 3.0, 5.5, 2.1)
 ]
-

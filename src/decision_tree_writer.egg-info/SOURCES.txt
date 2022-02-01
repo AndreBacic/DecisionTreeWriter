@@ -4,6 +4,7 @@ pyproject.toml
 setup.cfg
 src/decision_tree_writer/BaseDecisionTree.py
 src/decision_tree_writer/TreeWriter.py
+src/decision_tree_writer/UncomparableDataSetItemsException.py
 src/decision_tree_writer/__init__.py
 src/decision_tree_writer.egg-info/PKG-INFO
 src/decision_tree_writer.egg-info/SOURCES.txt
