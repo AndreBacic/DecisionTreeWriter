@@ -1,11 +1,11 @@
-from this import d
 from decision_tree_writer.BaseDecisionTree import *
+from decision_tree_writer.CorrelatedDataComparer import CorrelatedDataComparer
+from decision_tree_writer.UncomparableDataSetItemsException import UncomparableDataSetItemsException
 from typing import Dict, List, Tuple
 import uuid
 
-from decision_tree_writer.UncomparableDataSetItemsException import UncomparableDataSetItemsException
 
-class DecisionTreeWriter:
+class DecisionTreeWriter(CorrelatedDataComparer):
     """
     Makes a decision tree based on a data set 
     and then saves it to a new .py file as a class extending BaseDecisionTree
@@ -23,7 +23,7 @@ class DecisionTreeWriter:
         self.math_funcs = [self.MATH_EQUALS, self.MATH_SUM, self.MATH_DIFFERENCE, self.MATH_PRODUCT, self.MATH_QUOTIENT]
 
 
-    def create_tree(self, data_set: List[Dict or object], # TODO: Validate that all of the items in data_set have the same keys/attributes
+    def create_tree(self, data_set: List[Dict or object],
                          look_for_correlations: bool = True, 
                          tree_name: str = "DecisionTreeModel",
                          file_folder: str = None,
@@ -49,7 +49,7 @@ class DecisionTreeWriter:
         
         guid = str(uuid.uuid4()).replace('-', '_')
         file_name = f"{tree_name}__{guid}"
-
+        # TODO: Validate that all of the items in data_set have the same keys/attributes, but ignore those that have string values. Also, make sure that all of the keys/attributes have numeric or boolean values.
         if not data_set_is_certainly_comparable and not self.is_comparable_data_set(data_set):
             raise UncomparableDataSetItemsException("The items in the given data set cannot be compared. Please make sure that all data items have the same attributes/keys.")
 
@@ -351,20 +351,4 @@ class DecisionTreeWriter:
     def __set_min_node_size(self, val: int):
         if val < 1: val = 1
         self.__min_node_size = val
-    max_depth = property(__get_min_node_size, __set_min_node_size)
-
-
-    # Same functions used by BaseDecisionTree for duck typing
-    def MATH_EQUALS(self, n1, n2) -> float:
-        return float(n1 == n2)
-    def MATH_SUM(self, n1, n2) -> float:
-        return n1+n2
-    def MATH_DIFFERENCE(self, n1, n2) -> float:
-        return n1-n2
-    def MATH_PRODUCT(self, n1, n2) -> float:
-        return n1*n2
-    def MATH_QUOTIENT(self, n1, n2) -> float:
-        """Divides n1 by n2 but returns n1 * 2**128 if n2 is zero."""
-        if n2 == 0:
-            return n1*340282366920938463463374607431768211456 # 2**128
-        return n1+n2
+    max_depth = property(__get_min_node_size, __set_min_node_size)    
