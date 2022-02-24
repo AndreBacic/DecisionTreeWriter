@@ -23,3 +23,16 @@ trained_model = Iris_Classifier__de3224c8_b2ce_4d58_b932_fefd793abee6()
 unlabeled_iris = Iris("?", 7.5, 3.1, 5.8, 1.7)
 label = trained_model.classify_one(unlabeled_iris) # classifying an object doesn't change it's state in any way, so unlabeled_iris.species is still "?"
 print(label) # virginica
+
+# to actually label irises, their state must be changed to the labels the model gives:
+more_irises = [
+    Iris('?', 5.5, 3.9, 1.6, 0.3),
+    Iris('??', 6.5, 2.3, 4.4, 1.6),
+    Iris('???', 5.3, 3.6, 1.4, 0.2)
+]
+for i, label in enumerate(trained_model.classify_many(more_irises)):
+    more_irises[i].species = label
+
+# now the irises are properly labeled
+for iris in more_irises:
+    print(iris.species,end=", ") # setosa, versicolor, setosa, 
