@@ -100,7 +100,8 @@ class DecisionTreeWriter(CorrelatedDataComparer):
 
 
     def __validate_tree_name(self, tree_name):
-        errorMessage = "When using a DecisionTreeWriter instance, you asked it to create a model with an invalid name. Please give a valid function name next time."
+        errorMessage = "When using a DecisionTreeWriter instance, you asked it to create a model with an invalid name." + \
+                       " Please give a valid function name next time (must start with a letter or underscore)."
         i = 0
         for char in tree_name:
             if char not in "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_- ":
