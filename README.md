@@ -1,4 +1,6 @@
 # Decision Tree Writer
+[![PyPI Latest Release](https://github.com/AndreBacic/DecisionTreeWriter/blob/master/pypiv.svg)](https://pypi.org/project/decision-tree-writer)
+[![License](https://github.com/AndreBacic/DecisionTreeWriter/blob/master/license.svg)](https://github.com/AndreBacic/DecisionTreeWriter/blob/master/LICENCE)
 
 This package allows you to train a binary classification decision tree on a list of labeled dictionaries or class instances, and then writes a new .py file with the code for the new decision tree model.
 
