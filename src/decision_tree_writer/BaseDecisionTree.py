@@ -6,7 +6,7 @@ class BaseDecisionTree(CorrelatedDataComparer):
     """
     A decision tree that classifies objects of type supported_data_type
     """
-    def __init__(self, root: 'Branch', supported_data_type: type, name: str = "DecisionTreeModel") -> None:
+    def __init__(self, supported_data_type: type, name: str = "DecisionTreeModel", root: 'Branch' = None) -> None:
         self.root = root
         self.supported_data_type = supported_data_type
         self.name = name

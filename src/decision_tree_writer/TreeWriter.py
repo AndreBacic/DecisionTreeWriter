@@ -73,7 +73,7 @@ class DecisionTreeWriter(CorrelatedDataComparer):
                 '    """',
                f"    {file_name} has been trained to identify the {self.label_name} of a given {data_type_name}.",
                 '    """',
-               f"    tree = BaseDecisionTree(None, {data_type}, '{file_name}')"]
+               f"    tree = BaseDecisionTree({data_type}, '{file_name}')"]
 
         # 1) Format data_set
         expanded_data_set = []

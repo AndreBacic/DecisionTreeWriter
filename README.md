@@ -78,7 +78,7 @@ def Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree
     Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d 
     has been trained to identify the species of a given dictionary object.
     """
-    tree = BaseDecisionTree(None, dict,
+    tree = BaseDecisionTree(dict,
             'Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d')
     tree.root = Branch(lambda x: x['sepal_length'] <= 5.5)
     tree.root.l = Leaf('setosa')
@@ -100,7 +100,7 @@ from decision_tree_writer.BaseDecisionTree import *
 from sample_data.flowers import Iris
 
 def Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree':
-    tree = BaseDecisionTree(None, Iris, 
+    tree = BaseDecisionTree(Iris, 
                 'Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d')
 ```
 
