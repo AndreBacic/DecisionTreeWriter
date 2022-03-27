@@ -1,5 +1,6 @@
 LICENCE
 README.md
+license.svg
 pyproject.toml
 setup.cfg
 src/decision_tree_writer/BaseDecisionTree.py

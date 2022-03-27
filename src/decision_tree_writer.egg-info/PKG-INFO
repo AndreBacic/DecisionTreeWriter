@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: decision-tree-writer
-Version: 0.3.1
+Version: 0.4.0
 Summary: Scaffolds out code for decision tree models that can learn to find relationships between the attributes of an object.
 Home-page: https://github.com/AndreBacic/DecisionTreeWriter
 Author: Andre Bacic
@@ -14,8 +14,11 @@ Classifier: Operating System :: OS Independent
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
 License-File: LICENCE
+License-File: license.svg
 
 # Decision Tree Writer
+[![PyPI Latest Release](https://github.com/AndreBacic/DecisionTreeWriter/blob/master/pypiv.svg)](https://pypi.org/project/decision-tree-writer)
+[![License](https://github.com/AndreBacic/DecisionTreeWriter/blob/master/license.svg)](https://github.com/AndreBacic/DecisionTreeWriter/blob/master/LICENCE)
 
 This package allows you to train a binary classification decision tree on a list of labeled dictionaries or class instances, and then writes a new .py file with the code for the new decision tree model.
 
@@ -93,7 +96,7 @@ def Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree
     Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d 
     has been trained to identify the species of a given dictionary object.
     """
-    tree = BaseDecisionTree(None, dict,
+    tree = BaseDecisionTree(dict,
             'Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d')
     tree.root = Branch(lambda x: x['sepal_length'] <= 5.5)
     tree.root.l = Leaf('setosa')
@@ -115,7 +118,7 @@ from decision_tree_writer.BaseDecisionTree import *
 from sample_data.flowers import Iris
 
 def Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d() -> 'BaseDecisionTree':
-    tree = BaseDecisionTree(None, Iris, 
+    tree = BaseDecisionTree(Iris, 
                 'Iris_Classifier__0c609d3a_741e_4770_8bce_df246bad054d')
 ```
 
