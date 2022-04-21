@@ -1,6 +1,7 @@
 from decision_tree_writer.BaseDecisionTree import *
 from decision_tree_writer.CorrelatedDataComparer import CorrelatedDataComparer
-from decision_tree_writer.UncomparableDataSetItemsException import UncomparableDataSetItemsException
+import decision_tree_writer.DataValidator
+import decision_tree_writer.DataCleaner
 from typing import Dict, List, Tuple
 import uuid
 
@@ -50,8 +51,8 @@ class DecisionTreeWriter(CorrelatedDataComparer):
         guid = str(uuid.uuid4()).replace('-', '_')
         file_name = f"{tree_name}__{guid}"
         # TODO: Validate that all of the items in data_set have the same keys/attributes, but ignore those that have string values. Also, make sure that all of the keys/attributes have numeric or boolean values.
-        if not data_set_is_certainly_comparable and not self.is_comparable_data_set(data_set):
-            raise UncomparableDataSetItemsException("The items in the given data set cannot be compared. Please make sure that all data items have the same attributes/keys.")
+        if not data_set_is_certainly_comparable:
+            data_set = DataCleaner.clean_data_set(data_set) # raises UncomparableDataSetItemsException if it can't clean the data set            
 
         if type(data_set[0]) == dict:
             data_type_name = "dictionary object"
@@ -113,31 +114,6 @@ class DecisionTreeWriter(CorrelatedDataComparer):
             i += 1
 
         return tree_name.replace(" ","_").replace("-","_")
-
-
-    def is_comparable_data_set(self, data_set: List[Dict]) -> bool:
-        """
-        Makes sure all items in data_set are of the same type.
-        If the items are dictionaries, this method checks if they have the same keys.
-
-        O of time: O(n)
-        O of space: O(1)
-        """
-        if len(data_set) <= 1:
-            return True
-
-        needed_type = type(data_set[0])
-        for item in data_set[1:]:
-            if type(item) != needed_type:
-                return False
-
-        if needed_type == dict:
-            needed_keys = data_set[0].keys()
-            for item in data_set[1:]:
-                if item.keys() != needed_keys:
-                    return False
-        
-        return True
 
 
     def __build_branch(self, data_set: List[Dict], depth: int, branch_chain: str) -> List[str]:
@@ -352,4 +328,18 @@ class DecisionTreeWriter(CorrelatedDataComparer):
     def __set_min_node_size(self, val: int):
         if val < 1: val = 1
         self.__min_node_size = val
-    max_depth = property(__get_min_node_size, __set_min_node_size)    
+    max_depth = property(__get_min_node_size, __set_min_node_size)
+
+
+    
+    def is_comparable_data_set(self, data_set: List[Dict]) -> bool:
+        """
+        DEPRECATED: Use DataCleaner.is_comparable_data_set directly instead.
+
+        Makes sure all items in data_set are of the same type.
+        If the items are dictionaries, this method checks if they have the same keys.
+
+        O of time: O(n)
+        O of space: O(1)
+        """
+        return DataCleaner.is_comparable_data_set(data_set)
