@@ -1,8 +1,8 @@
 from decision_tree_writer.BaseDecisionTree import *
 from decision_tree_writer.CorrelatedDataComparer import CorrelatedDataComparer
-import decision_tree_writer.DataValidator
 import decision_tree_writer.DataCleaner
 from typing import Dict, List, Tuple
+from deprecated import deprecated
 import uuid
 
 
@@ -50,7 +50,7 @@ class DecisionTreeWriter(CorrelatedDataComparer):
         
         guid = str(uuid.uuid4()).replace('-', '_')
         file_name = f"{tree_name}__{guid}"
-        # TODO: Validate that all of the items in data_set have the same keys/attributes, but ignore those that have string values. Also, make sure that all of the keys/attributes have numeric or boolean values.
+        
         if not data_set_is_certainly_comparable:
             data_set = DataCleaner.clean_data_set(data_set) # raises UncomparableDataSetItemsException if it can't clean the data set            
 
@@ -331,11 +331,9 @@ class DecisionTreeWriter(CorrelatedDataComparer):
     max_depth = property(__get_min_node_size, __set_min_node_size)
 
 
-    
+    @deprecated(version='0.4.2', reason="Use DataCleaner.is_comparable_data_set directly instead.")
     def is_comparable_data_set(self, data_set: List[Dict]) -> bool:
         """
-        DEPRECATED: Use DataCleaner.is_comparable_data_set directly instead.
-
         Makes sure all items in data_set are of the same type.
         If the items are dictionaries, this method checks if they have the same keys.
 

@@ -9,7 +9,7 @@
 
 from typing import Dict, List
 
-
+        
 def clean_data_set(data_set: List[Dict]) -> List[Dict]:
     """
     Cleans a data set of dictionaries so that it can be used to train a decision tree.
@@ -27,6 +27,7 @@ def clean_data_set(data_set: List[Dict]) -> List[Dict]:
 
 
 # may be legacy code but I'm leaving it here for now
+# TODO: Validate that all of the items in data_set have the same keys/attributes, but ignore those that have string values. Also, make sure that all of the keys/attributes have numeric or boolean values.
 def is_comparable_data_set(data_set: List[Dict]) -> bool:
     """
     Makes sure all items in data_set are of the same type.
