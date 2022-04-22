@@ -46,13 +46,28 @@ class DecisionTreeWriter(CorrelatedDataComparer):
         O of space: O(n)
         """
 
+        # 1) Format data_set
+        expanded_data_set = []
+
+        if type(data_set[0]) != dict:
+            expanded_data_set = list(map(lambda x: x.__dict__, data_set))
+            self.__field_access_prefix = "."
+            self.__field_access_postfix = ""
+        else:
+            expanded_data_set = list(data_set)
+            self.__field_access_prefix = "['"
+            self.__field_access_postfix = "']"
+        
+        if not data_set_is_certainly_comparable:
+            expanded_data_set = DataCleaner.clean_data_set(expanded_data_set) # raises UncomparableDataSetItemsException if it can't clean the data set            
+
+
+        # 2) Boilerplate tree model code
         tree_name = self.__validate_tree_name(tree_name)
         
         guid = str(uuid.uuid4()).replace('-', '_')
         file_name = f"{tree_name}__{guid}"
-        
-        if not data_set_is_certainly_comparable:
-            data_set = DataCleaner.clean_data_set(data_set) # raises UncomparableDataSetItemsException if it can't clean the data set            
+
 
         if type(data_set[0]) == dict:
             data_type_name = "dictionary object"
@@ -76,27 +91,19 @@ class DecisionTreeWriter(CorrelatedDataComparer):
                 '    """',
                f"    tree = BaseDecisionTree({data_type}, '{file_name}')"]
 
-        # 1) Format data_set
-        expanded_data_set = []
-
-        if type(data_set[0]) != dict:
-            expanded_data_set = list(map(lambda x: x.__dict__, data_set))
-            self.__field_access_prefix = "."
-            self.__field_access_postfix = ""
-        else:
-            expanded_data_set = list(data_set)
-            self.__field_access_prefix = "['"
-            self.__field_access_postfix = "']"
-
+        
+        # 3) add correlated key/value pairs to the data set if requested
         if look_for_correlations:
             expanded_data_set = self.__find_correlations(expanded_data_set)
 
-        # 2) recursively build branches or leaves based on best fit
+
+        # 4) recursively build branches or leaves based on best fit
         file += self.__build_branch(expanded_data_set, 1, ".root")
 
         file += ["    ", "    return tree"]
 
         
+        # 5) write the tree model code to file
         self.__write_tree_file(file_name, file, file_folder)
 
 
