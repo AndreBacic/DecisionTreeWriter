@@ -5,6 +5,7 @@ pyproject.toml
 setup.cfg
 src/decision_tree_writer/BaseDecisionTree.py
 src/decision_tree_writer/CorrelatedDataComparer.py
+src/decision_tree_writer/DataCleaner.py
 src/decision_tree_writer/TreeWriter.py
 src/decision_tree_writer/UncomparableDataSetItemsException.py
 src/decision_tree_writer/__init__.py
