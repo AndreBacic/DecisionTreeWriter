@@ -14,6 +14,7 @@
 
 
 from typing import Dict, List
+from decision_tree_writer.UncomparableDataSetItemsException import UncomparableDataSetItemsException
 
         
 def clean_data_set(data_set: List[Dict], label_name: str) -> List[Dict]:
@@ -27,7 +28,7 @@ def clean_data_set(data_set: List[Dict], label_name: str) -> List[Dict]:
     O of space: O(n*m) where n is the number of items in the data set and m is the number of keys in the data set
     """
     if len(data_set) <= 1:
-        return data_set
+        raise UncomparableDataSetItemsException("Data set must have at least two items, so that they can be compared.")
 
     # copy input data set so that we don't modify it in place
     data_set = data_set.copy()
@@ -35,10 +36,8 @@ def clean_data_set(data_set: List[Dict], label_name: str) -> List[Dict]:
     # TODO: Refactor to lowercase all keys in the data set? That could cause problems if items have keys where one is the other but with different case (e.g. "a" and "A")
     # TODO: Refactor to try to cast string values to float or bool
     # first get all keys not in every item in the data set
-    keys_in_every_item = []
+    keys_in_every_item = data_set[0].keys()
     for item in data_set:
-        if not keys_in_every_item:
-            keys_in_every_item = item.keys()
         keys_in_every_item = [key for key in keys_in_every_item if key in item and type(item[key]) in [int, float, bool]]
 
     if label_name not in keys_in_every_item:
