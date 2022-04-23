@@ -59,7 +59,7 @@ class DecisionTreeWriter(CorrelatedDataComparer):
             self.__field_access_postfix = "']"
         
         if not data_set_is_certainly_comparable:
-            expanded_data_set = DataCleaner.clean_data_set(expanded_data_set) # raises UncomparableDataSetItemsException if it can't clean the data set            
+            expanded_data_set = DataCleaner.clean_data_set(expanded_data_set, self.label_name) # raises UncomparableDataSetItemsException if it can't clean the data set            
 
 
         # 2) Boilerplate tree model code
