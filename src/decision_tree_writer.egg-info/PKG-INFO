@@ -1,13 +1,11 @@
 Metadata-Version: 2.1
 Name: decision-tree-writer
-Version: 0.4.2
-Summary: Scaffolds out code for decision tree models that can learn to find relationships between the attributes of an object.
+Version: 0.5.0
+Summary: Scaffolds out code for decision tree models that can learn to find relationships between multiple attributes of objects.
 Home-page: https://github.com/AndreBacic/DecisionTreeWriter
 Author: Andre Bacic
 Author-email: andre9050@yahoo.com
-License: UNKNOWN
 Project-URL: Bug Tracker, https://github.com/AndreBacic/DecisionTreeWriter/issues
-Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
@@ -147,5 +145,3 @@ print(tree.classify_many(
 
 ## Bugs or questions
 If you find any problems with this package of have any questions, please create an issue on [this package's GitHub repo](https://github.com/AndreBacic/DecisionTreeWriter/issues)
-
-

@@ -1,6 +1,6 @@
 from decision_tree_writer.BaseDecisionTree import *
 from decision_tree_writer.CorrelatedDataComparer import CorrelatedDataComparer
-import decision_tree_writer.DataCleaner
+import decision_tree_writer.DataCleaner as DataCleaner
 from typing import Dict, List, Tuple
 from deprecated import deprecated
 import uuid
@@ -16,19 +16,20 @@ class DecisionTreeWriter(CorrelatedDataComparer):
         self.min_node_size = min_node_size
         self.label_name = label_name
 
-        self.supported_field_types = [int, float, bool]
-
         self.__field_access_prefix = "."
         self.__field_access_postfix = ""
 
         self.math_funcs = [self.MATH_EQUALS, self.MATH_SUM, self.MATH_DIFFERENCE, self.MATH_PRODUCT, self.MATH_QUOTIENT]
 
 
-    def create_tree(self, data_set: List[Dict or object],
+
+    def create_tree(self, data_set: List[object or Dict[str: int or float or bool]],
                          look_for_correlations: bool = True, 
                          tree_name: str = "DecisionTreeModel",
                          file_folder: str = None,
-                         data_set_is_certainly_comparable: bool = False) -> None:
+                         data_set_is_certainly_comparable: bool = False,
+                         max_depth: int = None,
+                         min_node_size: int = None) -> None:
         """
         self trains a decision tree to classify items of the type of items in data_set by its key/field self.label_name,
         and then writes the code for the new decision tree model to file_folder/tree_name__newUuid.py.
@@ -41,10 +42,19 @@ class DecisionTreeWriter(CorrelatedDataComparer):
 
         data_set_is_certainly_comparable tells the method if it should first analyze the data set to see if the data items are comparable.
         By default (False) the analysis is performed, but setting data_set_is_certainly_comparable to True will stop it.
+
+        max_depth is the maximum depth of the tree. If left as None, the default given at the the creation of self will be used.
+        If overridden, the value must be an integer greater than 0. The new value will be the new default for all further calls to self.
         
+        min_node_size is the minimum number of training data items required to make a new branch (AKA node) of the tree. 
+        If left as None, the default given at the the creation of self will be used.
+        If overridden, the value must be an integer greater than 0. The new value will be the new default for all further calls to self.
+
         O of time: O(len(data_set)^2 * log2(len(data_set))) = O(n^2 * log2(n)) <- (best and probably average cases, worst is O(n^3))
         O of space: O(n)
         """
+        if max_depth: self.max_depth = max_depth
+        if min_node_size: self.min_node_size = min_node_size
 
         # 1) Format data_set
         expanded_data_set = []
@@ -68,7 +78,6 @@ class DecisionTreeWriter(CorrelatedDataComparer):
         guid = str(uuid.uuid4()).replace('-', '_')
         file_name = f"{tree_name}__{guid}"
 
-
         if type(data_set[0]) == dict:
             data_type_name = "dictionary object"
             data_type = "dict"
@@ -90,18 +99,15 @@ class DecisionTreeWriter(CorrelatedDataComparer):
                f"    {file_name} has been trained to identify the {self.label_name} of a given {data_type_name}.",
                 '    """',
                f"    tree = BaseDecisionTree({data_type}, '{file_name}')"]
-
         
         # 3) add correlated key/value pairs to the data set if requested
         if look_for_correlations:
             expanded_data_set = self.__find_correlations(expanded_data_set)
 
-
         # 4) recursively build branches or leaves based on best fit
         file += self.__build_branch(expanded_data_set, 1, ".root")
 
         file += ["    ", "    return tree"]
-
         
         # 5) write the tree model code to file
         self.__write_tree_file(file_name, file, file_folder)
@@ -322,20 +328,27 @@ class DecisionTreeWriter(CorrelatedDataComparer):
         s = round(s, 7) # resolves some weird rounding errors
         return s
 
-    def __get_max_depth(self):
+
+    def __get_max_depth(self) -> int:
         return self.__max_depth
     def __set_max_depth(self, val: int):
-        if val > 998: val = 998
-        elif val < 1: val = 1
+        #if val > 998: val = 998 # NOT necessary because the max recursion depth of Python can be changed
+        if val < 1: val = 1
         self.__max_depth = val
-    max_depth = property(__get_max_depth, __set_max_depth)
+    max_depth: int = property(__get_max_depth, __set_max_depth)
 
-    def __get_min_node_size(self):
+    def __get_min_node_size(self) -> int:
         return self.__min_node_size
     def __set_min_node_size(self, val: int):
         if val < 1: val = 1
         self.__min_node_size = val
-    max_depth = property(__get_min_node_size, __set_min_node_size)
+    min_node_size: int = property(__get_min_node_size, __set_min_node_size)
+
+    def __get_supported_field_types(self) -> List[type]:
+        """ The data types of fields/values of given training data objects/dicts that are supported by this class 
+        and by decision trees for comparing those fields/values. """
+        return [int, float, bool]
+    supported_field_types: List[type] = property(__get_supported_field_types)
 
 
     @deprecated(version='0.4.2', reason="Use DataCleaner.is_comparable_data_set directly instead.")
