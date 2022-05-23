@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: decision-tree-writer
-Version: 0.5.0
+Version: 0.5.1
 Summary: Scaffolds out code for decision tree models that can learn to find relationships between multiple attributes of objects.
 Home-page: https://github.com/AndreBacic/DecisionTreeWriter
 Author: Andre Bacic
